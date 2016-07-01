@@ -40,6 +40,7 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.webui.Utils;
 import org.exoplatform.social.webui.profile.UIProfileUserSearch;
+import org.exoplatform.social.webui.profile.UIUserInvitation;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -98,6 +99,24 @@ public class UIMembersPortlet extends UIPortletApplication {
   private String selectedChar = null;
   
 //  private static final int FIRST_PAGE = 1;
+
+  /**
+   * constructor
+   *
+   * @throws Exception
+   */
+  public UIMembersPortlet() throws Exception {
+    uiSearchMemberOfSpace = createUIComponent(UIProfileUserSearch.class, null, "UIProfileUserSearch");
+    uiSearchMemberOfSpace.setTypeOfRelation(SPACE_MEMBER);
+    uiSearchMemberOfSpace.setSpaceURL(getSpace().getUrl());
+    uiSearchMemberOfSpace.setHasPeopleTab(false);
+    addChild(uiSearchMemberOfSpace);
+    addChild(UIUserInvitation.class, null, null);
+    
+    initMember();
+    initManager();
+    
+  }
 
   public void setMemberListAccess(ListAccess<Identity> memberListAccess){
     this.memberListAccess = memberListAccess;
@@ -175,23 +194,6 @@ public class UIMembersPortlet extends UIPortletApplication {
    */
   public void setIdentityList(ListAccess<Identity> identityList) {
     this.memberListAccess = identityList;
-  }
-
-  /**
-   * constructor
-   *
-   * @throws Exception
-   */
-  public UIMembersPortlet() throws Exception {
-    uiSearchMemberOfSpace = createUIComponent(UIProfileUserSearch.class, null, "UIProfileUserSearch");
-    uiSearchMemberOfSpace.setTypeOfRelation(SPACE_MEMBER);
-    uiSearchMemberOfSpace.setSpaceURL(getSpace().getUrl());
-    uiSearchMemberOfSpace.setHasPeopleTab(false);
-    addChild(uiSearchMemberOfSpace);
-    
-    initMember();
-    initManager();
-    
   }
 
   /**
