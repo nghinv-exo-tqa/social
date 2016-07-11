@@ -105,17 +105,29 @@ public class UIMembersPortlet extends UIPortletApplication {
    *
    * @throws Exception
    */
-  public UIMembersPortlet() throws Exception {
+  public UIMembersPortlet() throws Exception {    
     uiSearchMemberOfSpace = createUIComponent(UIProfileUserSearch.class, null, "UIProfileUserSearch");
     uiSearchMemberOfSpace.setTypeOfRelation(SPACE_MEMBER);
     uiSearchMemberOfSpace.setSpaceURL(getSpace().getUrl());
     uiSearchMemberOfSpace.setHasPeopleTab(false);
     addChild(uiSearchMemberOfSpace);
-    addChild(UIUserInvitation.class, null, null);
-    
+
     initMember();
     initManager();
-    
+
+    boolean isAdmin = false;
+    for (Identity user: managerList) {
+      // TODO: Get the current user name
+      String currentUser = "trong";
+      if (currentUser.equals(user.getRemoteId())) {
+        isAdmin = true;
+        break;
+      }
+    }
+
+    if (isAdmin) {
+      addChild(UIUserInvitation.class, null, null);
+    }
   }
 
   public void setMemberListAccess(ListAccess<Identity> memberListAccess){
