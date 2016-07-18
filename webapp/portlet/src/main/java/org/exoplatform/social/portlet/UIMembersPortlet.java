@@ -96,6 +96,8 @@ public class UIMembersPortlet extends UIPortletApplication {
   boolean enableLoadNext;
   private boolean loadAtEnd;
   private String selectedChar = null;
+
+  private String msg;
   
 //  private static final int FIRST_PAGE = 1;
 
@@ -126,6 +128,14 @@ public class UIMembersPortlet extends UIPortletApplication {
     if (isAdmin) {
       addChild(UIUserInvitation.class, null, null);
     }
+  }
+
+  public void addFlashMessage(String msg) {
+    this.msg = msg;
+  }
+
+  public String getFlashMessage() {
+    return this.msg;
   }
 
   public void setMemberListAccess(ListAccess<Identity> memberListAccess){

@@ -1,5 +1,8 @@
 <%
 String inviteAction = uicomponent.event("Invite") + "; return false;";
+
+String restUrl = uicomponent.getRestURL();
+
 %>
 <div class="uiUserInvitation">
   <% uiform.begin();%>
@@ -16,6 +19,6 @@ String inviteAction = uicomponent.event("Invite") + "; return false;";
    def requireJs = jsManager.getRequireJS();
    
    requireJs.require("SHARED/invite", "invite");
-   requireJs.addScripts("invite.build('user');");
+   requireJs.addScripts("invite.build('user', '$restUrl');");
   %>
 </div>

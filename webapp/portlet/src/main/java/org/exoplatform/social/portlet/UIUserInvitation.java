@@ -27,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.User;
@@ -35,10 +36,12 @@ import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.profile.ProfileFilter;
+import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.webui.Utils;
 import org.exoplatform.web.application.ApplicationMessage;
+import org.exoplatform.web.application.RequestContext;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
@@ -60,9 +63,12 @@ import org.exoplatform.webui.form.validator.MandatoryValidator;
 public class UIUserInvitation extends UIForm {
   private static final String USER = "user";
   private SpaceService spaceService;
+  private String spaceUrl;
 
   public UIUserInvitation() throws Exception {
     addUIFormInput(new UIFormStringInput(USER, null, null).addValidator(MandatoryValidator.class));
+
+    spaceUrl = org.exoplatform.social.core.space.SpaceUtils.getSpaceUrlByContext();
   }
 
   /**
@@ -78,6 +84,19 @@ public class UIUserInvitation extends UIForm {
     return spaceService;
   }
 
+  public String getRestURL() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("/").append(PortalContainer.getCurrentRestContextName()).append("/social/people/suggest.json?");
+    builder.append("currentUser=").append(RequestContext.getCurrentInstance().getRemoteUser());
+    builder.append("&spaceURL=").append(spaceUrl);
+    builder.append("&typeOfRelation=").append("user_to_invite");
+    return builder.toString();
+  }
+
+  public void addMessage(String msg) {
+    UIMembersPortlet parent = getAncestorOfType(UIMembersPortlet.class);
+    parent.addFlashMessage(msg);
+  }
 
   /**
    * Validates invited users for checking if any error happens.
@@ -142,11 +161,13 @@ public class UIUserInvitation extends UIForm {
     }
     
     if (notExistUsers.size() > 0) {
-      appMsg = new ApplicationMessage("UISpaceMember.msg.user-not-exist",
-                                      notExistUsers.toArray(new String[notExistUsers.size()]),
-                                      ApplicationMessage.WARNING);
+//      appMsg = new ApplicationMessage("UISpaceMember.msg.user-not-exist",
+//                                      notExistUsers.toArray(new String[notExistUsers.size()]),
+//                                      ApplicationMessage.WARNING);
       appMsg.setArgsLocalized(false);
       uiApp.addMessage(appMsg);
+
+      addMessage("UISpaceMember.msg.user-not-exist");
     }
     
     if (invitedUsers.size() > 0) {
@@ -155,6 +176,8 @@ public class UIUserInvitation extends UIForm {
                                       ApplicationMessage.WARNING);
       appMsg.setArgsLocalized(false);
       uiApp.addMessage(appMsg);
+
+      addMessage("UISpaceMember.msg.user-is-invited");
     }
     
     if (memberUsers.size() > 0) {
@@ -163,6 +186,8 @@ public class UIUserInvitation extends UIForm {
                                       ApplicationMessage.WARNING);
       appMsg.setArgsLocalized(false);
       uiApp.addMessage(appMsg);
+
+      addMessage("UISpaceMember.msg.user-is-member");
     }
     return invitedUserNames;
   }

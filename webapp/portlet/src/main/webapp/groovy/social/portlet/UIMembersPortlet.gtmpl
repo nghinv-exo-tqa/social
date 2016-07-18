@@ -55,6 +55,10 @@ jsManager.require("SHARED/jquery", "jq")
 <div class="uiSocApplication uiMembersPortlet" id="$uicomponent.id">
   <h3 class="uiInputInfo">$spaceName</h3>
   <span>$visibility</span>
+  <%
+  if (uicomponent.getFlashMessage() != null) {%>
+    <div class="notify"><%=uicomponent.getFlashMessage();%></div>
+  <%}%>
   <h4 class="titleWithBorder mgB220">$administratorLabel</h4>
   <div id="spaceManagerListBox">
    <% if (managerList.size() > 0) { %>
